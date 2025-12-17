@@ -68,6 +68,10 @@ class Ecommerce_Header_Plugin {
      * Ajax handler for retrieving cart count.
      */
     public function ajax_cart_count() {
+        if ( function_exists( 'wc_load_cart' ) ) {
+            wc_load_cart();
+        }
+
         wp_send_json_success(
             [
                 'count' => $this->get_cart_count(),
@@ -356,9 +360,18 @@ class Ecommerce_Header_Plugin {
      */
     private function get_cart_count() {
         if ( class_exists( 'WooCommerce' ) && function_exists( 'WC' ) ) {
-            $cart = WC()->cart;
-            if ( $cart ) {
-                return (int) $cart->get_cart_contents_count();
+            $wc = WC();
+
+            if ( null === $wc->cart && function_exists( 'wc_load_cart' ) ) {
+                wc_load_cart();
+            }
+
+            if ( $wc->cart && method_exists( $wc->cart, 'get_cart' ) ) {
+                $wc->cart->get_cart();
+            }
+
+            if ( $wc->cart && method_exists( $wc->cart, 'get_cart_contents_count' ) ) {
+                return (int) $wc->cart->get_cart_contents_count();
             }
         }
 
