@@ -21,6 +21,38 @@
         });
     }
 
+    function toggleWhatsappPanel() {
+        var toggle = document.querySelector('[data-echp-whatsapp-toggle]');
+        var panel = document.querySelector('[data-echp-whatsapp-panel]');
+
+        if (!toggle || !panel) {
+            return;
+        }
+
+        function setState(isOpen) {
+            panel.classList.toggle('is-open', isOpen);
+            toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            panel.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+        }
+
+        toggle.addEventListener('click', function () {
+            var isOpen = panel.classList.contains('is-open');
+            setState(!isOpen);
+        });
+
+        document.addEventListener('click', function (event) {
+            if (!panel.classList.contains('is-open')) {
+                return;
+            }
+
+            if (event.target.closest('[data-echp-whatsapp]')) {
+                return;
+            }
+
+            setState(false);
+        });
+    }
+
     function updateCartCount(count) {
         var el = document.querySelector('[data-echp-cart-count]');
         if (!el) {
@@ -78,6 +110,7 @@
 
     ready(function () {
         toggleMenu();
+        toggleWhatsappPanel();
         bindCartEvents();
         requestCartCount();
     });

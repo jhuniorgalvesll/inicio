@@ -37,6 +37,7 @@ class Ecommerce_Header_Plugin {
         add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
         add_action( 'wp_body_open', [ $this, 'render_header' ] );
         add_action( 'template_redirect', [ $this, 'maybe_attach_legacy_hook' ] );
+        add_action( 'wp_footer', [ $this, 'render_whatsapp_widget' ] );
         add_action( 'wp_ajax_echp_cart_count', [ $this, 'ajax_cart_count' ] );
         add_action( 'wp_ajax_nopriv_echp_cart_count', [ $this, 'ajax_cart_count' ] );
     }
@@ -99,6 +100,12 @@ class Ecommerce_Header_Plugin {
             'show_search'  => 1,
             'show_account' => 1,
             'show_cart'    => 1,
+            'whatsapp_enabled'      => 1,
+            'whatsapp_title'        => __( 'Habla con Fertisem', 'ecommerce-header-suite' ),
+            'whatsapp_description'  => __( 'Elige a la persona indicada para ayudarte.', 'ecommerce-header-suite' ),
+            'whatsapp_button_label' => __( 'WhatsApp', 'ecommerce-header-suite' ),
+            'whatsapp_position'     => 'right',
+            'whatsapp_contacts'     => "Ventas|+51999999999|Hola, quiero cotizar\nSoporte|+51999999998|Necesito ayuda con mi pedido",
         ];
     }
 
@@ -192,6 +199,63 @@ class Ecommerce_Header_Plugin {
             'echp-settings',
             'echp_settings_general'
         );
+
+        add_settings_section(
+            'echp_settings_whatsapp',
+            __( 'WhatsApp flotante', 'ecommerce-header-suite' ),
+            function () {
+                echo '<p>' . esc_html__( 'Configura el botón flotante de WhatsApp para Fertisem con varias personas de contacto.', 'ecommerce-header-suite' ) . '</p>';
+            },
+            'echp-settings'
+        );
+
+        add_settings_field(
+            'echp_whatsapp_enabled',
+            __( 'Activar botón flotante', 'ecommerce-header-suite' ),
+            [ $this, 'field_whatsapp_enabled' ],
+            'echp-settings',
+            'echp_settings_whatsapp'
+        );
+
+        add_settings_field(
+            'echp_whatsapp_title',
+            __( 'Título del panel', 'ecommerce-header-suite' ),
+            [ $this, 'field_whatsapp_title' ],
+            'echp-settings',
+            'echp_settings_whatsapp'
+        );
+
+        add_settings_field(
+            'echp_whatsapp_description',
+            __( 'Descripción corta', 'ecommerce-header-suite' ),
+            [ $this, 'field_whatsapp_description' ],
+            'echp-settings',
+            'echp_settings_whatsapp'
+        );
+
+        add_settings_field(
+            'echp_whatsapp_button_label',
+            __( 'Etiqueta del botón', 'ecommerce-header-suite' ),
+            [ $this, 'field_whatsapp_button_label' ],
+            'echp-settings',
+            'echp_settings_whatsapp'
+        );
+
+        add_settings_field(
+            'echp_whatsapp_position',
+            __( 'Posición del botón', 'ecommerce-header-suite' ),
+            [ $this, 'field_whatsapp_position' ],
+            'echp-settings',
+            'echp_settings_whatsapp'
+        );
+
+        add_settings_field(
+            'echp_whatsapp_contacts',
+            __( 'Personas de contacto', 'ecommerce-header-suite' ),
+            [ $this, 'field_whatsapp_contacts' ],
+            'echp-settings',
+            'echp_settings_whatsapp'
+        );
     }
 
     /**
@@ -212,6 +276,14 @@ class Ecommerce_Header_Plugin {
         $output['show_search']  = empty( $input['show_search'] ) ? 0 : 1;
         $output['show_account'] = empty( $input['show_account'] ) ? 0 : 1;
         $output['show_cart']    = empty( $input['show_cart'] ) ? 0 : 1;
+        $output['whatsapp_enabled']      = empty( $input['whatsapp_enabled'] ) ? 0 : 1;
+        $output['whatsapp_title']        = isset( $input['whatsapp_title'] ) ? sanitize_text_field( $input['whatsapp_title'] ) : $defaults['whatsapp_title'];
+        $output['whatsapp_description']  = isset( $input['whatsapp_description'] ) ? sanitize_text_field( $input['whatsapp_description'] ) : $defaults['whatsapp_description'];
+        $output['whatsapp_button_label'] = isset( $input['whatsapp_button_label'] ) ? sanitize_text_field( $input['whatsapp_button_label'] ) : $defaults['whatsapp_button_label'];
+        $output['whatsapp_position']     = isset( $input['whatsapp_position'] ) && in_array( $input['whatsapp_position'], [ 'left', 'right' ], true )
+            ? $input['whatsapp_position']
+            : $defaults['whatsapp_position'];
+        $output['whatsapp_contacts']     = isset( $input['whatsapp_contacts'] ) ? sanitize_textarea_field( $input['whatsapp_contacts'] ) : $defaults['whatsapp_contacts'];
 
         return $output;
     }
@@ -235,6 +307,51 @@ class Ecommerce_Header_Plugin {
                 submit_button();
                 ?>
             </form>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render floating WhatsApp widget.
+     */
+    public function render_whatsapp_widget() {
+        if ( is_admin() ) {
+            return;
+        }
+
+        $options  = $this->get_options();
+        $contacts = $this->parse_whatsapp_contacts( $options['whatsapp_contacts'] );
+
+        if ( empty( $options['whatsapp_enabled'] ) || empty( $contacts ) ) {
+            return;
+        }
+
+        $position_class = $options['whatsapp_position'] === 'left' ? 'echp-whatsapp--left' : 'echp-whatsapp--right';
+        $panel_id       = 'echp-whatsapp-panel';
+        ?>
+        <div class="echp-whatsapp <?php echo esc_attr( $position_class ); ?>" data-echp-whatsapp>
+            <button class="echp-whatsapp__toggle" type="button" aria-expanded="false" aria-controls="<?php echo esc_attr( $panel_id ); ?>" data-echp-whatsapp-toggle>
+                <span class="echp-whatsapp__icon" aria-hidden="true"></span>
+                <span class="echp-whatsapp__label"><?php echo esc_html( $options['whatsapp_button_label'] ); ?></span>
+            </button>
+            <div id="<?php echo esc_attr( $panel_id ); ?>" class="echp-whatsapp__panel" aria-hidden="true" data-echp-whatsapp-panel>
+                <div class="echp-whatsapp__header">
+                    <p class="echp-whatsapp__title"><?php echo esc_html( $options['whatsapp_title'] ); ?></p>
+                    <?php if ( ! empty( $options['whatsapp_description'] ) ) : ?>
+                        <p class="echp-whatsapp__description"><?php echo esc_html( $options['whatsapp_description'] ); ?></p>
+                    <?php endif; ?>
+                </div>
+                <ul class="echp-whatsapp__list">
+                    <?php foreach ( $contacts as $contact ) : ?>
+                        <li>
+                            <a class="echp-whatsapp__contact" href="<?php echo esc_url( $contact['url'] ); ?>" target="_blank" rel="noopener">
+                                <span class="echp-whatsapp__name"><?php echo esc_html( $contact['name'] ); ?></span>
+                                <span class="echp-whatsapp__phone"><?php echo esc_html( $contact['phone_label'] ); ?></span>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
         </div>
         <?php
     }
@@ -366,6 +483,52 @@ class Ecommerce_Header_Plugin {
     }
 
     /**
+     * Parse WhatsApp contacts from textarea input.
+     *
+     * @param string $raw_contacts Raw textarea value.
+     *
+     * @return array
+     */
+    private function parse_whatsapp_contacts( $raw_contacts ) {
+        $contacts = [];
+        $lines    = preg_split( '/\r\n|\r|\n/', (string) $raw_contacts );
+
+        if ( empty( $lines ) ) {
+            return $contacts;
+        }
+
+        foreach ( $lines as $line ) {
+            $line = trim( $line );
+            if ( $line === '' ) {
+                continue;
+            }
+
+            $parts = array_map( 'trim', explode( '|', $line ) );
+            $name  = $parts[0] ?? '';
+            $phone = $parts[1] ?? '';
+            $text  = $parts[2] ?? '';
+
+            $phone_digits = preg_replace( '/\D+/', '', $phone );
+            if ( $phone_digits === '' ) {
+                continue;
+            }
+
+            $url = 'https://wa.me/' . $phone_digits;
+            if ( $text !== '' ) {
+                $url .= '?text=' . rawurlencode( $text );
+            }
+
+            $contacts[] = [
+                'name'        => $name !== '' ? $name : __( 'Asesor', 'ecommerce-header-suite' ),
+                'phone_label' => $phone !== '' ? $phone : $phone_digits,
+                'url'         => $url,
+            ];
+        }
+
+        return $contacts;
+    }
+
+    /**
      * Field: logo URL.
      */
     public function field_logo_url() {
@@ -442,6 +605,75 @@ class Ecommerce_Header_Plugin {
             <input type="checkbox" name="echp_options[show_cart]" value="1" <?php checked( $options['show_cart'], 1 ); ?> />
             <?php esc_html_e( 'Mostrar enlace al carrito con cantidad de productos.', 'ecommerce-header-suite' ); ?>
         </label>
+        <?php
+    }
+
+    /**
+     * Field: WhatsApp enabled.
+     */
+    public function field_whatsapp_enabled() {
+        $options = $this->get_options();
+        ?>
+        <label>
+            <input type="checkbox" name="echp_options[whatsapp_enabled]" value="1" <?php checked( $options['whatsapp_enabled'], 1 ); ?> />
+            <?php esc_html_e( 'Mostrar el botón flotante de WhatsApp.', 'ecommerce-header-suite' ); ?>
+        </label>
+        <?php
+    }
+
+    /**
+     * Field: WhatsApp title.
+     */
+    public function field_whatsapp_title() {
+        $options = $this->get_options();
+        ?>
+        <input type="text" class="regular-text" name="echp_options[whatsapp_title]" value="<?php echo esc_attr( $options['whatsapp_title'] ); ?>" />
+        <?php
+    }
+
+    /**
+     * Field: WhatsApp description.
+     */
+    public function field_whatsapp_description() {
+        $options = $this->get_options();
+        ?>
+        <input type="text" class="regular-text" name="echp_options[whatsapp_description]" value="<?php echo esc_attr( $options['whatsapp_description'] ); ?>" />
+        <?php
+    }
+
+    /**
+     * Field: WhatsApp button label.
+     */
+    public function field_whatsapp_button_label() {
+        $options = $this->get_options();
+        ?>
+        <input type="text" class="regular-text" name="echp_options[whatsapp_button_label]" value="<?php echo esc_attr( $options['whatsapp_button_label'] ); ?>" />
+        <?php
+    }
+
+    /**
+     * Field: WhatsApp position.
+     */
+    public function field_whatsapp_position() {
+        $options = $this->get_options();
+        ?>
+        <select name="echp_options[whatsapp_position]">
+            <option value="right" <?php selected( $options['whatsapp_position'], 'right' ); ?>><?php esc_html_e( 'Derecha', 'ecommerce-header-suite' ); ?></option>
+            <option value="left" <?php selected( $options['whatsapp_position'], 'left' ); ?>><?php esc_html_e( 'Izquierda', 'ecommerce-header-suite' ); ?></option>
+        </select>
+        <?php
+    }
+
+    /**
+     * Field: WhatsApp contacts.
+     */
+    public function field_whatsapp_contacts() {
+        $options = $this->get_options();
+        ?>
+        <textarea class="large-text" rows="5" name="echp_options[whatsapp_contacts]" placeholder="Nombre|+51999999999|Mensaje personalizado"><?php echo esc_textarea( $options['whatsapp_contacts'] ); ?></textarea>
+        <p class="description">
+            <?php esc_html_e( 'Una persona por línea. Formato: Nombre|Teléfono|Mensaje opcional.', 'ecommerce-header-suite' ); ?>
+        </p>
         <?php
     }
 }
