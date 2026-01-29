@@ -9,6 +9,7 @@ Plugin de WordPress que añade un encabezado moderno pensado para tiendas en lí
 - Estilos responsive listos para dispositivos móviles.
 - Botón hamburguesa con JavaScript ligero para mostrar/ocultar el menú en pantallas pequeñas.
 - Integración con WooCommerce para mostrar la cantidad de productos en el carrito y actualizarla tras añadir productos mediante AJAX.
+- Botón flotante de WhatsApp configurable con múltiples personas de contacto para Fertisem.
 
 ## Instalación
 
@@ -23,6 +24,7 @@ Plugin de WordPress que añade un encabezado moderno pensado para tiendas en lí
 - **Botón principal**: establece el texto y la URL que apuntará a tus promociones o categorías más rentables.
 - **Mensaje superior**: comparte beneficios de envío, horarios o contacto.
 - **Elementos opcionales**: activa o desactiva buscador, enlace de cuenta y resumen de carrito según las necesidades de tu tienda.
+- **WhatsApp flotante**: define el título, la descripción, la posición del botón y una lista de personas con su teléfono y mensaje personalizado.
 
 ## Hooks personalizados
 
