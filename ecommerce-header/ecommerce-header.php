@@ -2,7 +2,7 @@
 /**
  * Plugin Name: E-commerce Header Suite
  * Description: Proporciona un encabezado flexible para sitios de comercio electrónico, con búsqueda, resumen de carrito y accesos directos personalizables.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Inicio Dev Team
  * Text Domain: ecommerce-header-suite
  */
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'ECHP_VERSION', '1.0.0' );
+define( 'ECHP_VERSION', '1.1.0' );
 define( 'ECHP_PLUGIN_FILE', __FILE__ );
 define( 'ECHP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'ECHP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
@@ -93,19 +93,23 @@ class Ecommerce_Header_Plugin {
      */
     public static function get_default_options() {
         return [
-            'logo_url'     => '',
-            'cta_label'    => __( 'Ofertas', 'ecommerce-header-suite' ),
-            'cta_link'     => home_url( '/shop' ),
-            'support_text' => __( 'Envío gratis en pedidos superiores a $50', 'ecommerce-header-suite' ),
-            'show_search'  => 1,
-            'show_account' => 1,
-            'show_cart'    => 1,
-            'whatsapp_enabled'      => 1,
-            'whatsapp_title'        => __( 'Habla con Fertisem', 'ecommerce-header-suite' ),
-            'whatsapp_description'  => __( 'Elige a la persona indicada para ayudarte.', 'ecommerce-header-suite' ),
-            'whatsapp_button_label' => __( 'WhatsApp', 'ecommerce-header-suite' ),
-            'whatsapp_position'     => 'right',
-            'whatsapp_contacts'     => "Ventas|+51999999999|Hola, quiero cotizar\nSoporte|+51999999998|Necesito ayuda con mi pedido",
+            'logo_url'               => '',
+            'cta_label'              => __( 'Ver catálogo', 'ecommerce-header-suite' ),
+            'cta_link'               => home_url( '/shop' ),
+            'support_text'           => __( 'Envío gratis en pedidos superiores a $50', 'ecommerce-header-suite' ),
+            'contact_label'          => __( 'Asesoría inmediata', 'ecommerce-header-suite' ),
+            'contact_phone'          => '+51 999 999 999',
+            'top_links'              => "Mayoristas|/mayoristas\nPromociones|/promociones\nBlog|/blog",
+            'mockup_badges'          => "Stock actualizado\nEnvío nacional\nAsesoría personalizada",
+            'show_search'            => 1,
+            'show_account'           => 1,
+            'show_cart'              => 1,
+            'whatsapp_enabled'       => 1,
+            'whatsapp_title'         => __( 'Habla con Fertisem', 'ecommerce-header-suite' ),
+            'whatsapp_description'   => __( 'Elige a la persona indicada para ayudarte.', 'ecommerce-header-suite' ),
+            'whatsapp_button_label'  => __( 'WhatsApp', 'ecommerce-header-suite' ),
+            'whatsapp_position'      => 'right',
+            'whatsapp_contacts'      => "Ventas|+51999999999|Hola, quiero cotizar\nSoporte|+51999999998|Necesito ayuda con mi pedido",
         ];
     }
 
@@ -144,61 +148,17 @@ class Ecommerce_Header_Plugin {
             'echp-settings'
         );
 
-        add_settings_field(
-            'echp_logo_url',
-            __( 'URL del logo', 'ecommerce-header-suite' ),
-            [ $this, 'field_logo_url' ],
-            'echp-settings',
-            'echp_settings_general'
-        );
-
-        add_settings_field(
-            'echp_cta_label',
-            __( 'Texto del botón principal', 'ecommerce-header-suite' ),
-            [ $this, 'field_cta_label' ],
-            'echp-settings',
-            'echp_settings_general'
-        );
-
-        add_settings_field(
-            'echp_cta_link',
-            __( 'Enlace del botón principal', 'ecommerce-header-suite' ),
-            [ $this, 'field_cta_link' ],
-            'echp-settings',
-            'echp_settings_general'
-        );
-
-        add_settings_field(
-            'echp_support_text',
-            __( 'Texto informativo', 'ecommerce-header-suite' ),
-            [ $this, 'field_support_text' ],
-            'echp-settings',
-            'echp_settings_general'
-        );
-
-        add_settings_field(
-            'echp_show_search',
-            __( 'Mostrar buscador', 'ecommerce-header-suite' ),
-            [ $this, 'field_show_search' ],
-            'echp-settings',
-            'echp_settings_general'
-        );
-
-        add_settings_field(
-            'echp_show_account',
-            __( 'Mostrar acceso a cuenta', 'ecommerce-header-suite' ),
-            [ $this, 'field_show_account' ],
-            'echp-settings',
-            'echp_settings_general'
-        );
-
-        add_settings_field(
-            'echp_show_cart',
-            __( 'Mostrar resumen de carrito', 'ecommerce-header-suite' ),
-            [ $this, 'field_show_cart' ],
-            'echp-settings',
-            'echp_settings_general'
-        );
+        add_settings_field( 'echp_logo_url', __( 'URL del logo', 'ecommerce-header-suite' ), [ $this, 'field_logo_url' ], 'echp-settings', 'echp_settings_general' );
+        add_settings_field( 'echp_cta_label', __( 'Texto del botón principal', 'ecommerce-header-suite' ), [ $this, 'field_cta_label' ], 'echp-settings', 'echp_settings_general' );
+        add_settings_field( 'echp_cta_link', __( 'Enlace del botón principal', 'ecommerce-header-suite' ), [ $this, 'field_cta_link' ], 'echp-settings', 'echp_settings_general' );
+        add_settings_field( 'echp_support_text', __( 'Texto informativo', 'ecommerce-header-suite' ), [ $this, 'field_support_text' ], 'echp-settings', 'echp_settings_general' );
+        add_settings_field( 'echp_contact_label', __( 'Etiqueta de contacto', 'ecommerce-header-suite' ), [ $this, 'field_contact_label' ], 'echp-settings', 'echp_settings_general' );
+        add_settings_field( 'echp_contact_phone', __( 'Teléfono de contacto', 'ecommerce-header-suite' ), [ $this, 'field_contact_phone' ], 'echp-settings', 'echp_settings_general' );
+        add_settings_field( 'echp_top_links', __( 'Enlaces rápidos superiores', 'ecommerce-header-suite' ), [ $this, 'field_top_links' ], 'echp-settings', 'echp_settings_general' );
+        add_settings_field( 'echp_mockup_badges', __( 'Badges del mockup', 'ecommerce-header-suite' ), [ $this, 'field_mockup_badges' ], 'echp-settings', 'echp_settings_general' );
+        add_settings_field( 'echp_show_search', __( 'Mostrar buscador', 'ecommerce-header-suite' ), [ $this, 'field_show_search' ], 'echp-settings', 'echp_settings_general' );
+        add_settings_field( 'echp_show_account', __( 'Mostrar acceso a cuenta', 'ecommerce-header-suite' ), [ $this, 'field_show_account' ], 'echp-settings', 'echp_settings_general' );
+        add_settings_field( 'echp_show_cart', __( 'Mostrar resumen de carrito', 'ecommerce-header-suite' ), [ $this, 'field_show_cart' ], 'echp-settings', 'echp_settings_general' );
 
         add_settings_section(
             'echp_settings_whatsapp',
@@ -209,53 +169,12 @@ class Ecommerce_Header_Plugin {
             'echp-settings'
         );
 
-        add_settings_field(
-            'echp_whatsapp_enabled',
-            __( 'Activar botón flotante', 'ecommerce-header-suite' ),
-            [ $this, 'field_whatsapp_enabled' ],
-            'echp-settings',
-            'echp_settings_whatsapp'
-        );
-
-        add_settings_field(
-            'echp_whatsapp_title',
-            __( 'Título del panel', 'ecommerce-header-suite' ),
-            [ $this, 'field_whatsapp_title' ],
-            'echp-settings',
-            'echp_settings_whatsapp'
-        );
-
-        add_settings_field(
-            'echp_whatsapp_description',
-            __( 'Descripción corta', 'ecommerce-header-suite' ),
-            [ $this, 'field_whatsapp_description' ],
-            'echp-settings',
-            'echp_settings_whatsapp'
-        );
-
-        add_settings_field(
-            'echp_whatsapp_button_label',
-            __( 'Etiqueta del botón', 'ecommerce-header-suite' ),
-            [ $this, 'field_whatsapp_button_label' ],
-            'echp-settings',
-            'echp_settings_whatsapp'
-        );
-
-        add_settings_field(
-            'echp_whatsapp_position',
-            __( 'Posición del botón', 'ecommerce-header-suite' ),
-            [ $this, 'field_whatsapp_position' ],
-            'echp-settings',
-            'echp_settings_whatsapp'
-        );
-
-        add_settings_field(
-            'echp_whatsapp_contacts',
-            __( 'Personas de contacto', 'ecommerce-header-suite' ),
-            [ $this, 'field_whatsapp_contacts' ],
-            'echp-settings',
-            'echp_settings_whatsapp'
-        );
+        add_settings_field( 'echp_whatsapp_enabled', __( 'Activar botón flotante', 'ecommerce-header-suite' ), [ $this, 'field_whatsapp_enabled' ], 'echp-settings', 'echp_settings_whatsapp' );
+        add_settings_field( 'echp_whatsapp_title', __( 'Título del panel', 'ecommerce-header-suite' ), [ $this, 'field_whatsapp_title' ], 'echp-settings', 'echp_settings_whatsapp' );
+        add_settings_field( 'echp_whatsapp_description', __( 'Descripción corta', 'ecommerce-header-suite' ), [ $this, 'field_whatsapp_description' ], 'echp-settings', 'echp_settings_whatsapp' );
+        add_settings_field( 'echp_whatsapp_button_label', __( 'Etiqueta del botón', 'ecommerce-header-suite' ), [ $this, 'field_whatsapp_button_label' ], 'echp-settings', 'echp_settings_whatsapp' );
+        add_settings_field( 'echp_whatsapp_position', __( 'Posición del botón', 'ecommerce-header-suite' ), [ $this, 'field_whatsapp_position' ], 'echp-settings', 'echp_settings_whatsapp' );
+        add_settings_field( 'echp_whatsapp_contacts', __( 'Personas de contacto', 'ecommerce-header-suite' ), [ $this, 'field_whatsapp_contacts' ], 'echp-settings', 'echp_settings_whatsapp' );
     }
 
     /**
@@ -269,13 +188,17 @@ class Ecommerce_Header_Plugin {
         $defaults = self::get_default_options();
         $output   = $defaults;
 
-        $output['logo_url']     = isset( $input['logo_url'] ) ? esc_url_raw( $input['logo_url'] ) : $defaults['logo_url'];
-        $output['cta_label']    = isset( $input['cta_label'] ) ? sanitize_text_field( $input['cta_label'] ) : $defaults['cta_label'];
-        $output['cta_link']     = isset( $input['cta_link'] ) ? esc_url_raw( $input['cta_link'] ) : $defaults['cta_link'];
-        $output['support_text'] = isset( $input['support_text'] ) ? sanitize_text_field( $input['support_text'] ) : $defaults['support_text'];
-        $output['show_search']  = empty( $input['show_search'] ) ? 0 : 1;
-        $output['show_account'] = empty( $input['show_account'] ) ? 0 : 1;
-        $output['show_cart']    = empty( $input['show_cart'] ) ? 0 : 1;
+        $output['logo_url']              = isset( $input['logo_url'] ) ? esc_url_raw( $input['logo_url'] ) : $defaults['logo_url'];
+        $output['cta_label']             = isset( $input['cta_label'] ) ? sanitize_text_field( $input['cta_label'] ) : $defaults['cta_label'];
+        $output['cta_link']              = isset( $input['cta_link'] ) ? esc_url_raw( $input['cta_link'] ) : $defaults['cta_link'];
+        $output['support_text']          = isset( $input['support_text'] ) ? sanitize_text_field( $input['support_text'] ) : $defaults['support_text'];
+        $output['contact_label']         = isset( $input['contact_label'] ) ? sanitize_text_field( $input['contact_label'] ) : $defaults['contact_label'];
+        $output['contact_phone']         = isset( $input['contact_phone'] ) ? sanitize_text_field( $input['contact_phone'] ) : $defaults['contact_phone'];
+        $output['top_links']             = isset( $input['top_links'] ) ? sanitize_textarea_field( $input['top_links'] ) : $defaults['top_links'];
+        $output['mockup_badges']         = isset( $input['mockup_badges'] ) ? sanitize_textarea_field( $input['mockup_badges'] ) : $defaults['mockup_badges'];
+        $output['show_search']           = empty( $input['show_search'] ) ? 0 : 1;
+        $output['show_account']          = empty( $input['show_account'] ) ? 0 : 1;
+        $output['show_cart']             = empty( $input['show_cart'] ) ? 0 : 1;
         $output['whatsapp_enabled']      = empty( $input['whatsapp_enabled'] ) ? 0 : 1;
         $output['whatsapp_title']        = isset( $input['whatsapp_title'] ) ? sanitize_text_field( $input['whatsapp_title'] ) : $defaults['whatsapp_title'];
         $output['whatsapp_description']  = isset( $input['whatsapp_description'] ) ? sanitize_text_field( $input['whatsapp_description'] ) : $defaults['whatsapp_description'];
@@ -295,8 +218,6 @@ class Ecommerce_Header_Plugin {
         if ( ! current_user_can( 'manage_options' ) ) {
             return;
         }
-
-        $options = $this->get_options();
         ?>
         <div class="wrap">
             <h1><?php esc_html_e( 'Encabezado E-commerce', 'ecommerce-header-suite' ); ?></h1>
@@ -373,10 +294,13 @@ class Ecommerce_Header_Plugin {
         $logo_url  = $options['logo_url'];
         $support   = $options['support_text'];
 
+        $top_links    = $this->parse_quick_links( $options['top_links'] );
+        $mockup_badges = $this->parse_badges( $options['mockup_badges'] );
+
         $account_url  = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : wp_login_url();
         $cart_url     = function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : '#';
         $cart_count   = $this->get_cart_count();
-        $show_top_bar = ! empty( $support ) || $options['show_account'];
+        $show_top_bar = ! empty( $support ) || ! empty( $options['contact_phone'] ) || ! empty( $top_links ) || $options['show_account'];
 
         $has_menu = has_nav_menu( 'echp_header_menu' );
 
@@ -384,14 +308,24 @@ class Ecommerce_Header_Plugin {
         <header class="echp-header" role="banner">
             <?php if ( $show_top_bar ) : ?>
                 <div class="echp-top-bar">
-                    <?php if ( ! empty( $support ) ) : ?>
-                        <span class="echp-support-text"><?php echo esc_html( $support ); ?></span>
-                    <?php endif; ?>
-                    <?php if ( $options['show_account'] ) : ?>
-                        <a class="echp-account-link" href="<?php echo esc_url( $account_url ); ?>">
-                            <?php esc_html_e( 'Mi cuenta', 'ecommerce-header-suite' ); ?>
-                        </a>
-                    <?php endif; ?>
+                    <div class="echp-top-bar__left">
+                        <?php if ( ! empty( $support ) ) : ?>
+                            <span class="echp-support-text"><?php echo esc_html( $support ); ?></span>
+                        <?php endif; ?>
+                        <?php if ( ! empty( $options['contact_phone'] ) ) : ?>
+                            <a class="echp-contact-link" href="tel:<?php echo esc_attr( preg_replace( '/\D+/', '', $options['contact_phone'] ) ); ?>">
+                                <?php echo esc_html( $options['contact_label'] . ': ' . $options['contact_phone'] ); ?>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                    <div class="echp-top-bar__right">
+                        <?php foreach ( $top_links as $link ) : ?>
+                            <a class="echp-top-link" href="<?php echo esc_url( $link['url'] ); ?>"><?php echo esc_html( $link['label'] ); ?></a>
+                        <?php endforeach; ?>
+                        <?php if ( $options['show_account'] ) : ?>
+                            <a class="echp-account-link" href="<?php echo esc_url( $account_url ); ?>"><?php esc_html_e( 'Mi cuenta', 'ecommerce-header-suite' ); ?></a>
+                        <?php endif; ?>
+                    </div>
                 </div>
             <?php endif; ?>
             <div class="echp-main-bar">
@@ -442,6 +376,13 @@ class Ecommerce_Header_Plugin {
                 }
                 ?>
             </nav>
+            <?php if ( ! empty( $mockup_badges ) ) : ?>
+                <div class="echp-badges" role="list" aria-label="<?php esc_attr_e( 'Diferenciales de la tienda', 'ecommerce-header-suite' ); ?>">
+                    <?php foreach ( $mockup_badges as $badge ) : ?>
+                        <span class="echp-badge" role="listitem"><?php echo esc_html( $badge ); ?></span>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
         </header>
         <?php
     }
@@ -480,6 +421,69 @@ class Ecommerce_Header_Plugin {
         }
 
         return 0;
+    }
+
+    /**
+     * Parse quick links from textarea input.
+     *
+     * @param string $raw_links Raw textarea value.
+     *
+     * @return array
+     */
+    private function parse_quick_links( $raw_links ) {
+        $links = [];
+        $lines = preg_split( '/\r\n|\r|\n/', (string) $raw_links );
+
+        if ( empty( $lines ) ) {
+            return $links;
+        }
+
+        foreach ( $lines as $line ) {
+            $line = trim( $line );
+            if ( '' === $line ) {
+                continue;
+            }
+
+            $parts = array_map( 'trim', explode( '|', $line ) );
+            $label = $parts[0] ?? '';
+            $url   = $parts[1] ?? '';
+
+            if ( '' === $label || '' === $url ) {
+                continue;
+            }
+
+            $links[] = [
+                'label' => $label,
+                'url'   => $url,
+            ];
+        }
+
+        return $links;
+    }
+
+    /**
+     * Parse badges from textarea input.
+     *
+     * @param string $raw_badges Raw textarea value.
+     *
+     * @return array
+     */
+    private function parse_badges( $raw_badges ) {
+        $badges = [];
+        $lines  = preg_split( '/\r\n|\r|\n/', (string) $raw_badges );
+
+        if ( empty( $lines ) ) {
+            return $badges;
+        }
+
+        foreach ( $lines as $line ) {
+            $value = trim( $line );
+            if ( '' !== $value ) {
+                $badges[] = $value;
+            }
+        }
+
+        return $badges;
     }
 
     /**
@@ -566,6 +570,48 @@ class Ecommerce_Header_Plugin {
         $options = $this->get_options();
         ?>
         <input type="text" class="regular-text" name="echp_options[support_text]" value="<?php echo esc_attr( $options['support_text'] ); ?>" />
+        <?php
+    }
+
+    /**
+     * Field: contact label.
+     */
+    public function field_contact_label() {
+        $options = $this->get_options();
+        ?>
+        <input type="text" class="regular-text" name="echp_options[contact_label]" value="<?php echo esc_attr( $options['contact_label'] ); ?>" />
+        <?php
+    }
+
+    /**
+     * Field: contact phone.
+     */
+    public function field_contact_phone() {
+        $options = $this->get_options();
+        ?>
+        <input type="text" class="regular-text" name="echp_options[contact_phone]" value="<?php echo esc_attr( $options['contact_phone'] ); ?>" />
+        <?php
+    }
+
+    /**
+     * Field: top links.
+     */
+    public function field_top_links() {
+        $options = $this->get_options();
+        ?>
+        <textarea class="large-text" rows="4" name="echp_options[top_links]" placeholder="Promociones|/promociones"><?php echo esc_textarea( $options['top_links'] ); ?></textarea>
+        <p class="description"><?php esc_html_e( 'Un enlace por línea. Formato: Etiqueta|URL.', 'ecommerce-header-suite' ); ?></p>
+        <?php
+    }
+
+    /**
+     * Field: mockup badges.
+     */
+    public function field_mockup_badges() {
+        $options = $this->get_options();
+        ?>
+        <textarea class="large-text" rows="4" name="echp_options[mockup_badges]" placeholder="Stock actualizado"><?php echo esc_textarea( $options['mockup_badges'] ); ?></textarea>
+        <p class="description"><?php esc_html_e( 'Un badge por línea para la franja inferior del mockup.', 'ecommerce-header-suite' ); ?></p>
         <?php
     }
 
