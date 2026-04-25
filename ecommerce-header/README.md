@@ -1,41 +1,40 @@
 # E-commerce Header Suite
 
-Plugin de WordPress que añade un encabezado moderno pensado para tiendas en línea. Incluye barra superior con mensaje promocional, logotipo, buscador, botón principal configurable, enlace a la cuenta, resumen de carrito y menú adaptable con control móvil.
+Plugin de WordPress que añade un encabezado moderno pensado para tiendas en línea. Incluye barra superior con mensaje promocional, teléfono, enlaces rápidos, logotipo, buscador, CTA, carrito, menú adaptable y widget de WhatsApp multiagente.
 
 ## Características
 
 - Registro de ubicación de menú específica para el encabezado.
-- Panel de ajustes bajo **Apariencia → Encabezado E-commerce** para personalizar logo, CTA, mensaje informativo y visibilidad de cada elemento.
-- Estilos responsive listos para dispositivos móviles.
-- Botón hamburguesa con JavaScript ligero para mostrar/ocultar el menú en pantallas pequeñas.
-- Integración con WooCommerce para mostrar la cantidad de productos en el carrito y actualizarla tras añadir productos mediante AJAX.
-- Botón flotante de WhatsApp configurable con múltiples personas de contacto para Fertisem.
+- Panel de ajustes en **Apariencia → Encabezado E-commerce**.
+- Maquetación alineada al mockup: barra superior utilitaria, barra principal comercial, menú y franja de badges.
+- Datos base ya preconfigurados (promociones, mayoristas, blog, contacto y diferenciales).
+- Integración con WooCommerce para mostrar cantidad de productos en carrito y actualización vía AJAX.
+- Botón flotante de WhatsApp configurable con múltiples personas de contacto.
 
 ## Instalación
 
 1. Copia la carpeta `ecommerce-header` dentro de `wp-content/plugins/`.
-2. Activa **E-commerce Header Suite** desde el panel de *Plugins* en WordPress.
-3. Dirígete a **Apariencia → Encabezado E-commerce** para personalizar los elementos.
-4. Asigna un menú al nuevo espacio **Menú encabezado e-commerce** en **Apariencia → Menús**.
+2. Activa **E-commerce Header Suite** desde el panel de *Plugins*.
+3. Ve a **Apariencia → Encabezado E-commerce** para revisar/editar los datos cargados.
+4. Asigna un menú al espacio **Menú encabezado e-commerce** en **Apariencia → Menús**.
 
-## Personalización rápida
+## Campos nuevos orientados al mockup
 
-- **Logo**: introduce la URL de la imagen (puedes usar la biblioteca de medios de WordPress).
-- **Botón principal**: establece el texto y la URL que apuntará a tus promociones o categorías más rentables.
-- **Mensaje superior**: comparte beneficios de envío, horarios o contacto.
-- **Elementos opcionales**: activa o desactiva buscador, enlace de cuenta y resumen de carrito según las necesidades de tu tienda.
-- **WhatsApp flotante**: define el título, la descripción, la posición del botón y una lista de personas con su teléfono y mensaje personalizado.
+- **Etiqueta de contacto + teléfono** en la barra superior.
+- **Enlaces rápidos superiores** (una línea por enlace: `Etiqueta|URL`).
+- **Badges del mockup** (una línea por badge para la franja inferior).
 
 ## Hooks personalizados
 
-- **Evento JS** `echp-refresh-cart`: lanza este evento en `document` para forzar la actualización de la burbuja del carrito desde código personalizado.
+- **Evento JS** `echp-refresh-cart`: permite refrescar la burbuja del carrito desde scripts personalizados.
 
 ## Compatibilidad
 
 - Compatible con WooCommerce.
 - Fallback para temas sin `wp_body_open`, inyectando el encabezado antes del pie de página.
-- Incluye estilos y scripts autónomos para evitar conflictos.
 
 ## Desarrollo
 
-Los estilos principales se encuentran en `assets/css/header.css` y el comportamiento en `assets/js/header.js`. Puedes ejecutar `npm` o tu preprocesador favorito para ampliar o minificar estos archivos.
+- Estilos: `assets/css/header.css`
+- Scripts: `assets/js/header.js`
+- Lógica principal y settings: `ecommerce-header.php`
