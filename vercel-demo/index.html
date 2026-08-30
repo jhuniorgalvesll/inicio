@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FERTISEM Envíos PRO — Demo</title>
+<meta name="description" content="Demo pública y sanitizada del motor de cálculo de envíos para WooCommerce.">
+<style>
+:root{--green:#51C517;--deep:#007F5F;--yellow:#FAC713;--lime:#B6D12D;--ink:#16352d;--muted:#64756f;--bg:#f5f8f6;--line:#dfe8e3;--white:#fff;--danger:#b42318}*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}.wrap{max-width:1120px;margin:0 auto;padding:28px 18px 54px}.top{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap}.brand{display:flex;gap:12px;align-items:center}.mark{width:46px;height:46px;border-radius:14px;background:var(--deep);display:grid;place-items:center;color:#fff;font-weight:900}.brand h1{font-size:20px;margin:0}.brand p{margin:3px 0 0;color:var(--muted);font-size:13px}.badge{font-size:12px;font-weight:800;border:1px solid #cfe0d7;background:#fff;padding:8px 11px;border-radius:999px;color:var(--deep)}.notice{background:#fff8d9;border:1px solid #f2dc7d;border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.45;margin-bottom:20px}.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.card{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 8px 30px rgba(13,54,41,.05)}h2{font-size:17px;margin:0 0 16px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}label{font-size:12px;font-weight:800;color:#35584c}select,input{width:100%;border:1px solid #cddbd4;border-radius:11px;padding:12px 13px;font:inherit;background:#fff;color:var(--ink);outline:none}select:focus,input:focus{border-color:var(--deep);box-shadow:0 0 0 3px rgba(0,127,95,.09)}.hint{font-size:11px;color:var(--muted)}button{border:0;border-radius:11px;background:var(--deep);color:#fff;padding:13px 16px;font-weight:900;cursor:pointer;width:100%;margin-top:16px}button:hover{filter:brightness(.96)}.resultTop{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}.totalLabel{font-size:12px;color:var(--muted);font-weight:700}.total{font-size:34px;font-weight:950;letter-spacing:-.03em;margin-top:3px}.status{font-size:11px;font-weight:900;border-radius:999px;padding:7px 9px;background:#e7f7ef;color:var(--deep)}.rows{border-top:1px solid var(--line)}.row{display:flex;justify-content:space-between;gap:18px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}.row span:first-child{color:var(--muted)}.row strong{text-align:right}.logic{margin-top:16px;padding:13px;background:#f7faf8;border:1px dashed #c8d8d0;border-radius:12px;font-size:12px;line-height:1.5}.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.mini div{padding:12px;background:#fff;border:1px solid var(--line);border-radius:13px}.mini b{display:block;font-size:15px}.mini span{font-size:10px;color:var(--muted)}footer{margin-top:22px;color:var(--muted);font-size:11px;line-height:1.5;text-align:center}@media(max-width:800px){.grid{grid-template-columns:1fr}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.mini{grid-template-columns:1fr}.total{font-size:30px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><div class="mark">F</div><div><h1>FERTISEM Envíos PRO</h1><p>Simulador público del motor logístico</p></div></div>
+    <div class="badge">Demo sanitizada</div>
+  </div>
+
+  <div class="notice"><strong>Importante:</strong> esta demostración usa zonas, rangos e importes ficticios. No contiene tarifas comerciales reales, asignaciones internas reales ni datos de clientes.</div>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Simular un envío</h2>
+      <div class="fields">
+        <div class="field full"><label>Transportista</label><select id="carrier"><option value="olva">Envío a domicilio — Olva</option><option value="shalom">Shalom — pago en destino</option></select></div>
+        <div class="field"><label>Destino demo</label><select id="zone"><option value="A">Distrito demo A · Zona 1</option><option value="B">Distrito demo B · Zona 2</option><option value="C">Distrito demo C · Zona 3</option></select></div>
+        <div class="field"><label>Peso total (kg)</label><input id="weight" type="number" min="0.1" step="0.1" value="2.0"><div class="hint">En producción se obtiene desde WooCommerce.</div></div>
+        <div class="field"><label>Botellas / envases líquidos</label><input id="bottles" type="number" min="0" step="1" value="2"></div>
+        <div class="field"><label>Sobres de semillas</label><input id="seeds" type="number" min="0" step="1" value="10"></div>
+      </div>
+      <button id="calc">Calcular demo</button>
+
+      <div class="mini">
+        <div><b>Distrito → zona</b><span>Normalización y alias</span></div>
+        <div><b>Peso → rango</b><span>Tarifa base configurable</span></div>
+        <div><b>Volumen → ajuste</b><span>Envases y bulto</span></div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="resultTop"><div><div class="totalLabel">Tarifa demostrativa</div><div class="total" id="total">S/ 9.00</div></div><div class="status" id="status">Calculado</div></div>
+      <div class="rows">
+        <div class="row"><span>Zona demo</span><strong id="outZone">Zona 1</strong></div>
+        <div class="row"><span>Rango de peso</span><strong id="outRange">1.01–5.00 kg</strong></div>
+        <div class="row"><span>Tarifa base demo</span><strong id="outBase">S/ 8.00</strong></div>
+        <div class="row"><span>Ajuste de volumen demo</span><strong id="outVolume">S/ 1.00</strong></div>
+        <div class="row"><span>Ajuste semillas demo</span><strong id="outSeeds">S/ 0.00</strong></div>
+      </div>
+      <div class="logic" id="logic">El motor toma el destino, determina una zona, evalúa el peso total y añade un ajuste de tamaño/volumen cuando corresponde.</div>
+    </aside>
+  </div>
+
+  <footer>Demo técnica pública. Los valores de esta página son deliberadamente ficticios y sirven únicamente para explicar el flujo del plugin.</footer>
+</div>
+<script>
+const money=n=>'S/ '+Number(n).toFixed(2);
+const matrices={
+  light:{label:'0–1.00 kg',A:6,B:7,C:9},
+  medium:{label:'1.01–5.00 kg',A:8,B:10,C:12},
+  heavy:{label:'5.01–10.00 kg',A:13,B:16,C:19}
+};
+function volumeFee(n){if(n<=0)return 0;if(n===1)return .5;if(n<=3)return 1;if(n<=6)return 2;return 3;}
+function seedFee(n){if(n<=20)return 0;if(n<=40)return .5;return 1;}
+function calculate(){
+  const carrier=document.getElementById('carrier').value;
+  const zone=document.getElementById('zone').value;
+  const w=Math.max(0,parseFloat(document.getElementById('weight').value)||0);
+  const bottles=Math.max(0,parseInt(document.getElementById('bottles').value)||0);
+  const seeds=Math.max(0,parseInt(document.getElementById('seeds').value)||0);
+  const out={zone:'Zona '+({A:1,B:2,C:3}[zone])};
+  document.getElementById('outZone').textContent=out.zone;
+  if(carrier==='shalom'){
+    document.getElementById('total').textContent='Pago en destino';
+    document.getElementById('status').textContent='Sin cobro web';
+    document.getElementById('outRange').textContent='—';document.getElementById('outBase').textContent='S/ 0.00';document.getElementById('outVolume').textContent='S/ 0.00';document.getElementById('outSeeds').textContent='S/ 0.00';
+    document.getElementById('logic').textContent='En este modo demo, Shalom no cobra el flete dentro del checkout: el pago se realiza en destino.';return;
+  }
+  if(w>10){
+    document.getElementById('total').textContent='Cotizar';document.getElementById('status').textContent='Revisión manual';document.getElementById('outRange').textContent='Más de 10 kg';document.getElementById('outBase').textContent='—';document.getElementById('outVolume').textContent='—';document.getElementById('outSeeds').textContent='—';document.getElementById('logic').textContent='Los pedidos fuera del rango automático pasan a cotización manual en esta demo.';return;
+  }
+  const band=w<=1?matrices.light:(w<=5?matrices.medium:matrices.heavy);
+  const base=band[zone], vf=volumeFee(bottles), sf=seedFee(seeds), total=base+vf+sf;
+  document.getElementById('total').textContent=money(total);document.getElementById('status').textContent='Calculado';document.getElementById('outRange').textContent=band.label;document.getElementById('outBase').textContent=money(base);document.getElementById('outVolume').textContent=money(vf);document.getElementById('outSeeds').textContent=money(sf);
+  document.getElementById('logic').textContent=`${out.zone}: tarifa base demostrativa ${money(base)} + ajuste de volumen ${money(vf)} + ajuste de semillas ${money(sf)} = ${money(total)}.`;
+}
+document.getElementById('calc').addEventListener('click',calculate);['carrier','zone','weight','bottles','seeds'].forEach(id=>document.getElementById(id).addEventListener('change',calculate));calculate();
+</script>
+</body>
+</html>
