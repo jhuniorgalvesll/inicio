@@ -1,0 +1,83 @@
+# =====================================================================
+#  Fertisem Speed Boost – reglas de servidor (compresión + caché)
+#  Revisa con tu hosting antes de pegar. Haz copia del .htaccess.
+# =====================================================================
+
+# ---------------- .htaccess (Apache / LiteSpeed) ----------------
+# Pegar ANTES de "# BEGIN WordPress".
+
+<IfModule mod_mime.c>
+  AddType font/woff2 .woff2
+  AddType font/woff  .woff
+  AddType image/avif .avif
+  AddType image/webp .webp
+</IfModule>
+
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/xml text/css text/javascript application/javascript application/json application/xml application/rss+xml image/svg+xml font/ttf font/otf
+</IfModule>
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json application/xml application/rss+xml image/svg+xml font/ttf font/otf
+</IfModule>
+# woff/woff2 ya vienen comprimidos: no se vuelven a comprimir.
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                          "access plus 1 month"
+  ExpiresByType text/html                 "access plus 0 seconds"
+  ExpiresByType application/json          "access plus 0 seconds"
+  ExpiresByType image/jpeg                "access plus 1 year"
+  ExpiresByType image/png                 "access plus 1 year"
+  ExpiresByType image/gif                 "access plus 1 year"
+  ExpiresByType image/webp                "access plus 1 year"
+  ExpiresByType image/avif                "access plus 1 year"
+  ExpiresByType image/svg+xml             "access plus 1 year"
+  ExpiresByType image/x-icon              "access plus 1 year"
+  ExpiresByType font/woff                 "access plus 1 year"
+  ExpiresByType font/woff2                "access plus 1 year"
+  ExpiresByType text/css                  "access plus 1 year"
+  ExpiresByType application/javascript    "access plus 1 year"
+  ExpiresByType text/javascript           "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+  # CSS/JS llevan ?ver= en WordPress: se pueden cachear 1 año como inmutables.
+  <FilesMatch "\.(css|js|woff2?|avif|webp|jpe?g|png|gif|svg|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(woff2?|ttf|otf)$">
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+  Header append Vary Accept-Encoding env=!dont-vary
+  # Dentro de IfModule: si mod_headers no existe, ya no da error 500.
+  Header unset ETag
+</IfModule>
+FileETag None
+
+# ---------------- Nginx (dentro de server { }) ----------------
+# gzip viene en Nginx. brotli SOLO si tu Nginx tiene el módulo ngx_brotli
+# (si no lo tiene, Nginx no arranca: deja esas líneas comentadas).
+
+gzip on;
+gzip_vary on;
+gzip_comp_level 5;
+gzip_min_length 1024;
+gzip_types text/plain text/css text/xml application/javascript application/json application/xml application/rss+xml image/svg+xml font/ttf font/otf;
+
+# brotli on;
+# brotli_comp_level 5;
+# brotli_types text/plain text/css text/xml application/javascript application/json application/xml image/svg+xml font/ttf font/otf;
+
+# Nginx usa la PRIMERA location regex que coincide: las fuentes van primero
+# (en la 1.x el bloque de CORS para fuentes nunca se aplicaba).
+location ~* \.(?:woff2?|ttf|otf)$ {
+  add_header Access-Control-Allow-Origin "*";
+  add_header Cache-Control "public, max-age=31536000, immutable";
+  access_log off;
+  try_files $uri =404;
+}
+location ~* \.(?:css|js|avif|webp|jpe?g|png|gif|svg|ico)$ {
+  add_header Cache-Control "public, max-age=31536000, immutable";
+  access_log off;
+  try_files $uri =404;
+}
